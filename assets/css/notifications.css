@@ -1,0 +1,73 @@
+/* Styles pour les notifications */
+
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 9999;
+    max-width: 350px;
+    animation: slideIn 0.3s ease, fadeOut 0.5s ease 2.5s forwards;
+    font-size: 0.95rem;
+}
+
+.notification-success {
+    background-color: #e7f7ed;
+    border-left: 4px solid #28a745;
+    color: #1e7e34;
+}
+
+.notification-error {
+    background-color: #f8d7da;
+    border-left: 4px solid #dc3545;
+    color: #721c24;
+}
+
+.notification-warning {
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+    color: #856404;
+}
+
+.notification-info {
+    background-color: #e1f5fe;
+    border-left: 4px solid #03a9f4;
+    color: #0277bd;
+}
+
+.notification-icon {
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-message {
+    flex: 1;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
