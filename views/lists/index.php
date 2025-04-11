@@ -5,78 +5,103 @@ include_once __DIR__ . '/../layouts/header.php';
 
 <div class="lists-container">
     <div class="lists-header">
-        <h1 class="page-title">Mes Listes</h1>
-        <a href="create_list.php" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Créer une liste
-        </a>
+        <div class="search-bar">
+            <input type="text" placeholder="Rechercher une liste..." id="list-search">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+        <button class="btn btn-create-list">
+            <i class="fas fa-plus"></i> Créer une nouvelle liste
+        </button>
     </div>
-
-    <?php if (isset($_GET['success']) && $_GET['success'] === 'created'): ?>
-    <div class="alert alert-success">
-        <i class="fas fa-check-circle"></i> Liste créée avec succès.
-    </div>
-    <?php endif; ?>
-
-    <?php if (isset($_GET['error'])): ?>
-    <div class="alert alert-danger">
-        <i class="fas fa-exclamation-circle"></i> 
-        <?php
-        $error = $_GET['error'];
-        switch ($error) {
-            case 'name_required':
-                echo 'Le nom de la liste est obligatoire.';
-                break;
-            default:
-                echo 'Une erreur est survenue.';
-        }
-        ?>
-    </div>
-    <?php endif; ?>
 
     <div class="lists-grid">
         <?php if (empty($lists)): ?>
             <div class="empty-state">
                 <i class="fas fa-list fa-3x"></i>
                 <p>Vous n'avez pas encore créé de liste.</p>
-                <a href="create_list.php" class="btn btn-primary">Créer ma première liste</a>
+                <button class="btn btn-primary btn-create-list">Créer ma première liste</button>
             </div>
         <?php else: ?>
             <?php foreach ($lists as $list): ?>
                 <div class="list-card">
                     <div class="list-card-header">
+                        <div class="list-icon">
+                            <i class="fas fa-list"></i>
+                        </div>
                         <h3 class="list-name"><?= htmlspecialchars($list['name']) ?></h3>
-                        <span class="list-visibility <?= $list['is_public'] ? 'public' : 'private' ?>">
-                            <i class="fas <?= $list['is_public'] ? 'fa-globe' : 'fa-lock' ?>"></i>
-                            <?= $list['is_public'] ? 'Public' : 'Privé' ?>
-                        </span>
-                    </div>
-                    <div class="list-card-body">
-                        <p class="list-description">
-                            <?= !empty($list['description']) ? htmlspecialchars($list['description']) : 'Aucune description' ?>
-                        </p>
-                        <div class="list-stats">
-                            <div class="stat-item">
-                                <i class="fas fa-users"></i> <?= $list['profile_count'] ?> profils
-                            </div>
-                            <div class="stat-item">
-                                <i class="fas fa-calendar-alt"></i> Créée le <?= date('d/m/Y', strtotime($list['created_at'])) ?>
-                            </div>
+                        <div class="list-actions">
+                            <a href="edit_list.php?id=<?= $list['id'] ?>" class="edit-icon"><i class="fas fa-pencil-alt"></i></a>
+                            <a href="#" class="delete-icon" data-id="<?= $list['id'] ?>" data-name="<?= htmlspecialchars($list['name']) ?>"><i class="fas fa-trash"></i></a>
                         </div>
                     </div>
+                    
+                    <div class="list-profiles">
+                        <?php 
+                        // Récupérer les profils de la liste (limités à 6 pour l'affichage)
+                        $profiles = isset($list['profiles']) ? array_slice($list['profiles'], 0, 6) : [];
+                        
+                        // Afficher les avatars des profils
+                        foreach ($profiles as $profile): 
+                            $username = isset($profile['username']) ? $profile['username'] : '';
+                            $initial = substr($username, 0, 1);
+                            $avatarColors = ['#4a6cf7', '#f7734a', '#4af7a1', '#f74a6c', '#f7d54a'];
+                            $colorIndex = crc32($username) % count($avatarColors);
+                            $avatarColor = $avatarColors[$colorIndex];
+                        ?>
+                            <div class="profile-avatar" title="@<?= htmlspecialchars($username) ?>">
+                                <div class="avatar" style="background-color: <?= $avatarColor ?>;">
+                                    <?= strtoupper($initial) ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                        
+                        <?php 
+                        // Si moins de 6 profils, ajouter des espaces vides
+                        for ($i = count($profiles); $i < 6; $i++): 
+                        ?>
+                            <div class="profile-avatar empty"></div>
+                        <?php endfor; ?>
+                    </div>
+                    
                     <div class="list-card-footer">
-                        <a href="view_list.php?id=<?= $list['id'] ?>" class="btn btn-outline">
-                            <i class="fas fa-eye"></i> Voir
+                        <span class="profile-count"><?= $list['profile_count'] ?? 0 ?> profils</span>
+                        <a href="view_list.php?id=<?= $list['id'] ?>" class="btn btn-add-to-campaign">
+                            Ajouter à la campagne
                         </a>
-                        <a href="edit_list.php?id=<?= $list['id'] ?>" class="btn btn-outline">
-                            <i class="fas fa-edit"></i> Modifier
-                        </a>
-                        <button class="btn btn-outline btn-danger delete-list" data-id="<?= $list['id'] ?>" data-name="<?= htmlspecialchars($list['name']) ?>">
-                            <i class="fas fa-trash"></i> Supprimer
-                        </button>
                     </div>
                 </div>
             <?php endforeach; ?>
         <?php endif; ?>
+    </div>
+</div>
+
+<!-- Modal de création de liste -->
+<div class="modal" id="create-list-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Créer une nouvelle liste</h3>
+            <span class="close-modal">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="create-list-form" action="create_list.php" method="post">
+                <div class="form-group">
+                    <label for="list-name">Nom de la liste</label>
+                    <input type="text" id="list-name" name="name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="list-description">Description (optionnelle)</label>
+                    <textarea id="list-description" name="description" class="form-control"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-container">
+                        <input type="checkbox" name="is_public" id="list-public">
+                        <span class="checkmark"></span>
+                        Liste publique
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary">Créer la liste</button>
+            </form>
+        </div>
     </div>
 </div>
 

@@ -12,6 +12,15 @@
     <link rel="stylesheet" href="assets/css/lists.css">
     <link rel="stylesheet" href="assets/css/list_view.css">
     <?php endif; ?>
+    <?php if ($currentPage === 'followup'): ?>
+    <link rel="stylesheet" href="assets/css/followup.css">
+    <?php endif; ?>
+    <?php if ($currentPage === 'crm'): ?>
+    <link rel="stylesheet" href="assets/css/crm.css">
+    <?php endif; ?>
+    <?php if ($currentPage === 'search'): ?>
+    <link rel="stylesheet" href="assets/css/search_form.css">
+    <?php endif; ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -27,7 +36,7 @@
                 <ul>
                     <li<?= $currentPage === 'search' ? ' class="active"' : '' ?>><a href="index.php"><i class="fas fa-search"></i> Recherche</a></li>
                     <li<?= $currentPage === 'lists' ? ' class="active"' : '' ?>><a href="lists.php"><i class="fas fa-list"></i> Listes</a></li>
-                    <li<?= $currentPage === 'follow' ? ' class="active"' : '' ?>><a href="follow.php"><i class="fas fa-user-plus"></i> Suivi</a></li>
+                    <li<?= $currentPage === 'followup' ? ' class="active"' : '' ?>><a href="followup.php"><i class="fas fa-user-plus"></i> Suivi</a></li>
                     <li<?= $currentPage === 'crm' ? ' class="active"' : '' ?>><a href="crm.php"><i class="fas fa-chart-pie"></i> CRM</a></li>
                 </ul>
             </nav>

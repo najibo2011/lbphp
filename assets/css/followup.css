@@ -1,0 +1,278 @@
+/* Styles pour la page de suivi des prospects */
+
+.followup-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.followup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.followup-header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
+}
+
+.btn-refresh {
+    background-color: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #4b5563;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-refresh:hover {
+    background-color: #f9fafb;
+    border-color: #d1d5db;
+}
+
+.btn-refresh i {
+    font-size: 12px;
+}
+
+.followup-subheader {
+    margin-bottom: 20px;
+}
+
+.followup-subheader p {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+}
+
+.followup-table-container {
+    overflow-x: auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.followup-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.followup-table th {
+    background-color: #f9fafb;
+    color: #6b7280;
+    font-weight: 500;
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e5e7eb;
+    white-space: nowrap;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.followup-table td {
+    padding: 16px;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: top;
+}
+
+.followup-table tr:last-child td {
+    border-bottom: none;
+}
+
+.followup-table tr:hover {
+    background-color: #f9fafb;
+}
+
+.account-col {
+    min-width: 250px;
+}
+
+.list-col, .status-col {
+    min-width: 120px;
+}
+
+.date-col {
+    min-width: 80px;
+    text-align: center;
+}
+
+.account-cell {
+    padding-right: 24px;
+}
+
+.account-link {
+    color: #4f46e5;
+    font-weight: 500;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.account-link:hover {
+    text-decoration: underline;
+}
+
+.account-description {
+    color: #6b7280;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.list-cell {
+    color: #4b5563;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-badge.non-contacté {
+    background-color: #f3f4f6;
+    color: #6b7280;
+}
+
+.status-badge.pas-intéressé {
+    background-color: #fee2e2;
+    color: #ef4444;
+}
+
+.status-badge.contacté {
+    background-color: #e0f2fe;
+    color: #0ea5e9;
+}
+
+.status-badge.rendez-vous {
+    background-color: #d1fae5;
+    color: #10b981;
+}
+
+.date-cell {
+    text-align: center;
+    color: #d1d5db;
+}
+
+.date-cell.has-action {
+    color: #111827;
+}
+
+.action-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* Sélecteurs pour les classes avec des chiffres au début */
+.action-badge[class*="1er-message"] {
+    background-color: #e0f2fe;
+    color: #0ea5e9;
+}
+
+.action-badge[class*="pas-intéressé"] {
+    background-color: #fee2e2;
+    color: #ef4444;
+}
+
+.followup-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.pagination-prev,
+.pagination-next {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #4f46e5;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.pagination-prev:hover,
+.pagination-next:hover {
+    background-color: #f5f5ff;
+}
+
+.pagination-prev.disabled,
+.pagination-next.disabled {
+    color: #d1d5db;
+    pointer-events: none;
+}
+
+.pagination-numbers {
+    display: flex;
+    gap: 4px;
+}
+
+.pagination-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    color: #4b5563;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.pagination-number:hover {
+    background-color: #f5f5ff;
+    color: #4f46e5;
+}
+
+.pagination-number.active {
+    background-color: #4f46e5;
+    color: #fff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .followup-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .btn-refresh {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .followup-pagination {
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .pagination-numbers {
+        order: -1;
+    }
+}

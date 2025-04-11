@@ -4,10 +4,13 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Éléments du DOM pour la modal de suppression
     const deleteModal = document.getElementById('delete-list-modal');
+    const createModal = document.getElementById('create-list-modal');
     const listNameToDelete = document.getElementById('list-name-to-delete');
     const cancelDeleteBtn = document.getElementById('cancel-delete');
     const confirmDeleteBtn = document.getElementById('confirm-delete');
-    const closeModalBtn = document.querySelector('.close-modal');
+    const closeModalBtns = document.querySelectorAll('.close-modal');
+    const createListBtns = document.querySelectorAll('.btn-create-list');
+    const searchInput = document.getElementById('list-search');
     
     // ID de la liste à supprimer
     let listIdToDelete = null;
@@ -20,11 +23,25 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.style.overflow = 'hidden'; // Empêcher le défilement
     }
     
-    // Fonction pour fermer la modal
-    function closeDeleteModal() {
+    // Fonction pour fermer les modals
+    function closeModals() {
         deleteModal.style.display = 'none';
+        if (createModal) createModal.style.display = 'none';
         document.body.style.overflow = 'auto'; // Réactiver le défilement
         listIdToDelete = null;
+    }
+    
+    // Fonction pour ouvrir la modal de création de liste
+    function openCreateModal() {
+        if (createModal) {
+            createModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Empêcher le défilement
+            // Focus sur le champ de nom
+            setTimeout(() => {
+                const nameInput = document.getElementById('list-name');
+                if (nameInput) nameInput.focus();
+            }, 100);
+        }
     }
     
     // Fonction pour supprimer une liste
@@ -56,39 +73,84 @@ document.addEventListener('DOMContentLoaded', function() {
         form.submit();
     }
     
+    // Fonction de recherche de listes
+    function searchLists(query) {
+        query = query.toLowerCase().trim();
+        const listCards = document.querySelectorAll('.list-card');
+        
+        listCards.forEach(card => {
+            const listName = card.querySelector('.list-name').textContent.toLowerCase();
+            if (listName.includes(query) || query === '') {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+    
     // Écouteurs d'événements pour les boutons de suppression
-    document.querySelectorAll('.delete-list').forEach(btn => {
-        btn.addEventListener('click', function() {
+    document.querySelectorAll('.delete-icon').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
             const id = this.dataset.id;
             const name = this.dataset.name;
             openDeleteModal(id, name);
         });
     });
     
-    // Écouteurs d'événements pour la modal
+    // Écouteurs d'événements pour les boutons de création de liste
+    if (createListBtns.length > 0) {
+        createListBtns.forEach(btn => {
+            btn.addEventListener('click', openCreateModal);
+        });
+    }
+    
+    // Écouteur pour la recherche
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            searchLists(this.value);
+        });
+    }
+    
+    // Écouteurs d'événements pour la modal de suppression
     if (cancelDeleteBtn) {
-        cancelDeleteBtn.addEventListener('click', closeDeleteModal);
+        cancelDeleteBtn.addEventListener('click', closeModals);
     }
     
     if (confirmDeleteBtn) {
         confirmDeleteBtn.addEventListener('click', deleteList);
     }
     
-    if (closeModalBtn) {
-        closeModalBtn.addEventListener('click', closeDeleteModal);
+    // Fermer les modals avec le bouton de fermeture
+    if (closeModalBtns.length > 0) {
+        closeModalBtns.forEach(btn => {
+            btn.addEventListener('click', closeModals);
+        });
     }
     
-    // Fermer la modal en cliquant en dehors
+    // Fermer les modals en cliquant en dehors
     window.addEventListener('click', function(event) {
-        if (event.target === deleteModal) {
-            closeDeleteModal();
+        if (event.target === deleteModal || event.target === createModal) {
+            closeModals();
         }
     });
     
-    // Fermer la modal avec la touche Escape
+    // Fermer les modals avec la touche Escape
     document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape' && deleteModal.style.display === 'flex') {
-            closeDeleteModal();
+        if (event.key === 'Escape' && (deleteModal.style.display === 'flex' || (createModal && createModal.style.display === 'flex'))) {
+            closeModals();
         }
     });
+    
+    // Gestion du formulaire de création de liste
+    const createListForm = document.getElementById('create-list-form');
+    if (createListForm) {
+        createListForm.addEventListener('submit', function(e) {
+            const nameInput = document.getElementById('list-name');
+            if (!nameInput || !nameInput.value.trim()) {
+                e.preventDefault();
+                alert('Le nom de la liste est obligatoire.');
+            }
+        });
+    }
 });
