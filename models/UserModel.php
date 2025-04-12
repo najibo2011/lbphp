@@ -41,18 +41,40 @@ class UserModel extends Model {
      * Authentifier un utilisateur
      */
     public function authenticate($email, $password) {
-        $sql = "SELECT * FROM {$this->table} WHERE email = :email";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':email', $email);
-        $stmt->execute();
-        
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        if ($user && password_verify($password, $user['password'])) {
-            return $user;
+        if ($this->isSupabase) {
+            // Utiliser l'API Supabase pour l'authentification
+            try {
+                $response = $this->supabaseAPI->signIn($email, $password);
+                
+                if (isset($response['user'])) {
+                    // Récupérer les détails de l'utilisateur
+                    $params = ['email' => "eq.{$email}"];
+                    $userData = $this->supabaseAPI->get("/rest/v1/{$this->table}", $params);
+                    
+                    if (!empty($userData)) {
+                        return $userData[0];
+                    }
+                }
+            } catch (Exception $e) {
+                error_log("Erreur d'authentification Supabase: " . $e->getMessage());
+            }
+            
+            return false;
+        } else {
+            // Méthode MySQL originale
+            $sql = "SELECT * FROM {$this->table} WHERE email = :email";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':email', $email);
+            $stmt->execute();
+            
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($user && password_verify($password, $user['password'])) {
+                return $user;
+            }
+            
+            return false;
         }
-        
-        return false;
     }
     
     /**
@@ -89,6 +111,18 @@ class UserModel extends Model {
         $stmt->execute();
         
         return $token;
+    }
+    
+    /**
+     * Récupérer un utilisateur par son ID
+     */
+    public function findById($id) {
+        $sql = "SELECT * FROM {$this->table} WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
     
     /**

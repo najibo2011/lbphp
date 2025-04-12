@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/Database.php';
+require_once __DIR__ . '/SupabaseAPI.php';
+
 /**
  * Classe de base pour tous les modèles
  */
@@ -8,6 +11,7 @@ class Model {
     protected $primaryKey = 'id';
     protected $isSupabase = false;
     protected $dbInstance;
+    protected $supabaseAPI;
     
     public function __construct() {
         $this->dbInstance = Database::getInstance();
@@ -16,6 +20,9 @@ class Model {
         // Si nous n'utilisons pas Supabase, nous pouvons obtenir la connexion PDO
         if (!$this->isSupabase) {
             $this->db = $this->dbInstance->getConnection();
+        } else {
+            // Initialiser l'API Supabase
+            $this->supabaseAPI = SupabaseAPI::getInstance();
         }
     }
     

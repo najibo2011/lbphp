@@ -104,7 +104,10 @@ class Controller {
      * Vérifier si l'utilisateur est connecté
      */
     protected function isLoggedIn() {
-        return isset($_SESSION['user_id']);
+        // Authentification temporairement désactivée pour le développement
+        return true;
+        // Décommentez la ligne ci-dessous pour réactiver l'authentification
+        // return isset($_SESSION['user_id']);
     }
     
     /**
@@ -144,5 +147,15 @@ class Controller {
             return $userModel->getById($_SESSION['user_id']);
         }
         return null;
+    }
+    
+    /**
+     * Générer un jeton CSRF
+     */
+    protected function generateCsrfToken() {
+        if (!isset($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+        return $_SESSION['csrf_token'];
     }
 }

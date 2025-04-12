@@ -17,12 +17,12 @@ if (!defined('SUPABASE_ANON_KEY')) {
 return [
     // Configuration MySQL locale (commentée)
     'mysql' => [
-        'host' => 'localhost',
-        'dbname' => 'leadsbuilder',
+        'host' => '127.0.0.1',
+        'dbname' => 'lb1',
         'username' => 'root',
         'password' => 'root',
         'charset' => 'utf8mb4',
-        'port' => '3306'
+        'port' => '8889'
     ],
     
     // Configuration Supabase (API uniquement)

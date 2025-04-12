@@ -134,3 +134,81 @@ function exportCRMToCSV(cards, filename = 'crm_export.csv') {
         showError('Votre navigateur ne prend pas en charge l\'exportation de fichiers');
     }
 }
+
+/**
+ * Exporte les données personnelles de l'utilisateur au format JSON (conformité RGPD)
+ * @param {string} endpoint - URL de l'API pour récupérer les données
+ * @param {string} filename - Nom du fichier d'exportation
+ */
+function exportUserDataGDPR(endpoint = 'export_user_data.php', filename = 'mes_donnees_personnelles.json') {
+    // Afficher un message de chargement
+    showNotification('Préparation de l\'export de vos données...', 'info');
+    
+    // Récupérer les données de l'utilisateur depuis l'API
+    fetch(endpoint, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        credentials: 'same-origin'
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Erreur lors de la récupération des données');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Vérifier que les données sont valides
+        if (!data || Object.keys(data).length === 0) {
+            showError('Aucune donnée disponible pour l\'exportation');
+            return;
+        }
+        
+        // Ajouter des métadonnées à l'export
+        const exportData = {
+            metadata: {
+                exported_at: new Date().toISOString(),
+                service: 'LeadsBuilder',
+                version: '1.0',
+                user_id: data.user ? data.user.id : 'unknown'
+            },
+            data: data
+        };
+        
+        // Convertir les données en JSON formaté
+        const jsonContent = JSON.stringify(exportData, null, 2);
+        
+        // Créer un objet Blob pour le téléchargement
+        const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
+        
+        // Créer un lien de téléchargement
+        const link = document.createElement('a');
+        
+        // Vérifier si le navigateur prend en charge l'API URL
+        if (window.URL && window.URL.createObjectURL) {
+            link.href = window.URL.createObjectURL(blob);
+            link.download = filename;
+            
+            // Ajouter le lien au document
+            document.body.appendChild(link);
+            
+            // Cliquer sur le lien pour déclencher le téléchargement
+            link.click();
+            
+            // Supprimer le lien
+            document.body.removeChild(link);
+            
+            // Afficher un message de succès
+            showNotification('Vos données personnelles ont été exportées avec succès', 'success');
+        } else {
+            // Fallback pour les navigateurs qui ne prennent pas en charge l'API URL
+            showError('Votre navigateur ne prend pas en charge l\'exportation de données');
+        }
+    })
+    .catch(error => {
+        console.error('Erreur lors de l\'exportation des données :', error);
+        showError('Une erreur est survenue lors de l\'exportation de vos données');
+    });
+}
