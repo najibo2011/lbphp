@@ -29,7 +29,7 @@
     ?>
 </head>
 <body>
-    <div class="app-container">
+    <div class="">
         <!-- Header / Navigation -->
         <header class="app-header">
             <div class="logo">
@@ -86,21 +86,6 @@
             </div>
         </header>
 
-        <!-- Main Content -->
-        <main class="app-content">
-        
-        <?php
-        // Inclure la bannière de consentement aux cookies si elle n'est pas déjà affichée
-        if (isset($gdpr) && method_exists($gdpr, 'renderCookieBanner')) {
-            echo $gdpr->renderCookieBanner();
-        } else if (!isset($_SESSION['cookie_consent'])) {
-            // Si l'objet GDPR n'est pas disponible, inclure manuellement la classe
-            require_once __DIR__ . '/../../includes/Gdpr.php';
-            $gdpr = new Gdpr();
-            echo $gdpr->renderCookieBanner();
-        }
-        ?>
-        
         <style>
             .user-menu {
                 position: relative;
